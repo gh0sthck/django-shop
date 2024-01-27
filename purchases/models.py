@@ -1,5 +1,6 @@
 from django.db import models
 
+from pytils.translit import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=128, verbose_name="Имя")
@@ -9,9 +10,22 @@ class Category(models.Model):
         ordering = ["name"]
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("category_list", args=[self.slug])
 
     def __str__(self) -> str:
         return self.name
+
+
+class AvailableProductManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter().filter(available=True)
 
 
 class Product(models.Model):
@@ -31,5 +45,16 @@ class Product(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super(Product, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("product_list", args=[self.slug])
+
+    available_products = AvailableProductManager()
+
     def __str__(self) -> str:
         return self.name
+
