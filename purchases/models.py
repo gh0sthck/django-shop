@@ -19,7 +19,7 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("category", args=[self.slug])
+        return reverse("home", args=[self.slug])
 
     def __str__(self) -> str:
         return self.name
