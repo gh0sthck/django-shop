@@ -1,6 +1,8 @@
 from django.db import models
+from django.urls import reverse
 
 from pytils.translit import slugify
+
 
 class Category(models.Model):
     name = models.CharField(max_length=128, verbose_name="Имя")
@@ -17,7 +19,7 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("category_list", args=[self.slug])
+        return reverse("category", args=[self.slug])
 
     def __str__(self) -> str:
         return self.name
@@ -33,7 +35,7 @@ class Product(models.Model):
                                  on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name="Имя")
     slug = models.SlugField(max_length=128, verbose_name="Слаг")
-    image = models.ImageField(upload_to="prdoucts/", blank=True)
+    image = models.ImageField(upload_to="products/", blank=True)
     description = models.TextField(blank=True, verbose_name="Описание")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     available = models.BooleanField(default=True, verbose_name="В наличии")
@@ -51,7 +53,7 @@ class Product(models.Model):
         super(Product, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("product_list", args=[self.slug])
+        return reverse("product", args=[self.slug])
 
     available_products = AvailableProductManager()
 
