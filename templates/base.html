@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+
 	<head>
 		{% load static %}
 		<meta charset="UTF-8" />
@@ -8,8 +9,10 @@
 		<title>{% block title %} {% endblock title %}</title>
 		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 	</head>
-	<body>
+
+    <body>
 		{% block content %}
 		{% endblock content %}
 	</body>
+
 </html>
