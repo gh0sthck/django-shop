@@ -5,21 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    {% if category|length != 1 %}
+    {% if categories %}
         <form method="get">
-            Выберите категорию
-            <label>
-                <select>
-                    {% for cat in category %}
-                        <option value="category_slug">{{ cat.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-
+            {{ form.as_p }}
             <input type="submit" value="Выбрать">
         </form>
     {% else %}
-        {{ category.name }}
+        <h1>Товары категории {{ category.name }}</h1>
     {% endif %}
 
     {% for product in products %}
