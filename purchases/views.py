@@ -44,3 +44,16 @@ def create_product(request) -> HttpResponse:
         form = CreateProductForm()
 
     return render(request, "create_product.html", {"form": form})
+
+
+def edit_product(request, slug) -> HttpResponse:
+    product: Product = Product.objects.get(slug=slug)
+    if request.method == "POST":
+        form = CreateProductForm(request.POST, request.FILES, instance=product)
+        if form.has_changed():
+            form.save()
+            return redirect("home")
+    else:
+        form = CreateProductForm(instance=product)
+
+    return render(request, "create_product.html", {"form": form})
