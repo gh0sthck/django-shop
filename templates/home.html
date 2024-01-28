@@ -10,12 +10,18 @@
             {{ form.as_p }}
             <input type="submit" value="Выбрать">
         </form>
+        <h1>Все товары</h1>
     {% else %}
         <h1>Товары категории {{ category.name }}</h1>
     {% endif %}
 
     {% for product in products %}
-        <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
+        <div class="product">
+            <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
+            <img style="width: 30%; height: 320px;" src="media/{{ product.image }}" alt="Изображение продукта">
+            <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
+            <p>{{ product.price }}₽</p>
+        </div>
     {% endfor %}
 
 {% endblock %}

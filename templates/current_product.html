@@ -7,6 +7,8 @@
 {% block content %}
     <h1>{{ product.name }}</h1>
     <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+    <h3>Цена: {{ product.price }} ₽</h3>
     <hr />
+    <img style="width: 30%; height:320px;" src="/media/{{ product.image }}" alt="Изображение продукта">
     <p>{{ product.description }}</p>
 {% endblock %}
