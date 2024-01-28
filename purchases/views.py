@@ -1,10 +1,10 @@
 from typing import Optional
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import QuerySet
 from django.http import HttpResponse
 
-from .forms import CategoryForm
+from .forms import CategoryForm, CreateProductForm
 from .models import Product, Category
 
 
@@ -30,3 +30,17 @@ def current_product(request, slug) -> HttpResponse:
     product: Product = Product.available_products.get(slug=slug)
 
     return render(request, "current_product.html", {"product": product})
+
+
+def create_product(request) -> HttpResponse:
+    if request.method == "POST":
+        form = CreateProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            print(request.POST)
+            print(request.FILES)
+            form.save()
+            return redirect("home")
+    else:
+        form = CreateProductForm()
+
+    return render(request, "create_product.html", {"form": form})
