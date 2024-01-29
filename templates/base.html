@@ -20,9 +20,13 @@
 
             {% if user.is_authenticated %}
                 {{ user.username }}
-                <a href="{% url 'user_logout' %}">Выйти</a>
+                <form action="{% url 'user_logout' %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Выйти">
+                </form>
+{#                <a href="{% url 'user_logout' %}">Выйти</a>#}
             {% else %}
-                <a href="#">Войти</a>
+                <a href="{% url 'user_login' %}">Войти</a>
             {% endif %}
         </header>
 
