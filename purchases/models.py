@@ -32,7 +32,7 @@ class AvailableProductManager(models.Manager):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name="products",
-                                 on_delete=models.CASCADE)
+                                 on_delete=models.CASCADE, verbose_name="Категория")
     name = models.CharField(max_length=128, verbose_name="Имя")
     slug = models.SlugField(max_length=128, verbose_name="Слаг")
     image = models.ImageField(upload_to="products/", blank=True)

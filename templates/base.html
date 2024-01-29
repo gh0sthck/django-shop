@@ -11,6 +11,21 @@
 	</head>
 
     <body>
+        <header class="header">
+            <nav>
+                <ul class="navigation">
+                    <li><a href="{% url 'home' %}">Главная</a></li>
+                </ul>
+            </nav>
+
+            {% if user.is_authenticated %}
+                {{ user.username }}
+                <a href="{% url 'user_logout' %}">Выйти</a>
+            {% else %}
+                <a href="#">Войти</a>
+            {% endif %}
+        </header>
+
 		{% block content %}
 		{% endblock content %}
 	</body>

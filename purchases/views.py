@@ -33,27 +33,33 @@ def current_product(request, slug) -> HttpResponse:
 
 
 def create_product(request) -> HttpResponse:
-    if request.method == "POST":
-        form = CreateProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            print(request.POST)
-            print(request.FILES)
-            form.save()
-            return redirect("home")
-    else:
-        form = CreateProductForm()
+    if request.user.has_perms(["purchases.change_product", "purchases.add_product",
+                               "purchases.delete_product"]):
+        if request.method == "POST":
+            form = CreateProductForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                return redirect("home")
+        else:
+            form = CreateProductForm()
 
-    return render(request, "create_product.html", {"form": form})
+        return render(request, "create_product.html", {"form": form})
+    else:
+        return HttpResponse("You haven't permissions to that operation")
 
 
 def edit_product(request, slug) -> HttpResponse:
-    product: Product = Product.objects.get(slug=slug)
-    if request.method == "POST":
-        form = CreateProductForm(request.POST, request.FILES, instance=product)
-        if form.has_changed():
-            form.save()
-            return redirect("home")
-    else:
-        form = CreateProductForm(instance=product)
+    if request.user.has_perms(["purchases.change_product", "purchases.add_product",
+                               "purchases.delete_product"]):
+        product: Product = Product.objects.get(slug=slug)
+        if request.method == "POST":
+            form = CreateProductForm(request.POST, request.FILES, instance=product)
+            if form.has_changed():
+                form.save()
+                return redirect("home")
+        else:
+            form = CreateProductForm(instance=product)
 
-    return render(request, "create_product.html", {"form": form})
+        return render(request, "create_product.html", {"form": form})
+    else:
+        return HttpResponse("You haven't permissions to that operation")

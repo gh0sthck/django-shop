@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Вход в аккаунт
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <p>Ошибка: неверный логин или пароль</p>
+        {{ form.errors }}
+    {% else %}
+        <form method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="Войти">
+        </form>    
+    {% endif %}
+{% endblock %}
