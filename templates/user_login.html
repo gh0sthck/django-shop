@@ -5,14 +5,18 @@
 {% endblock %}
 
 {% block content %}
-    {% if form.errors %}
-        <p>Ошибка: неверный логин или пароль</p>
-        {{ form.errors }}
-    {% else %}
-        <form method="post">
-            {{ form.as_p }}
-            {% csrf_token %}
-            <input type="submit" value="Войти">
-        </form>    
+    {% if not user.is_authenticated %}
+        {% if form.errors %}
+            <p>Ошибка: неверный логин или пароль</p>
+            {{ form.errors }}
+        {% else %}
+            <form method="post">
+                {{ form.as_p }}
+                {% csrf_token %}
+                <input type="submit" value="Войти">
+            </form>
+        {% endif %}
+        {% else %}
+            <p>Вы уже вошли</p>
     {% endif %}
 {% endblock %}
