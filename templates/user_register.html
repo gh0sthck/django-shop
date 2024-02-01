@@ -5,9 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <input type="submit" value="Зарегистрироваться">
-    </form>
+    {% if not user.is_authenticated %}
+        <form method="post" enctype="multipart/form-data">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="Зарегистрироваться">
+        </form>
+    {% else %}
+        <p>У вас уже есть аккаунт.</p>
+    {% endif %}
 {% endblock %}

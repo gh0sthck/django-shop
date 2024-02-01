@@ -6,6 +6,7 @@
 
 {% block content %}
     {% if not user.is_authenticated %}
+        <p>Если у вас ещё нет аккаунта, вы можете <a href="{% url 'user_register' %}">зарегистрироваться</a>.</p>
         {% if form.errors %}
             <p>Ошибка: неверный логин или пароль</p>
             {{ form.errors }}

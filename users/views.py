@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from users.forms import RegisterClientForm
 from users.models import ShopClient
@@ -25,4 +25,10 @@ def user_register(request) -> HttpResponse:
 
         return render(request, "user_register.html", {"form": form})
     else:
-        return HttpResponse("You're authenticated")
+        return redirect("home")
+
+
+def user_page(request, user_slug) -> HttpResponse:
+    current_user: ShopClient = ShopClient.objects.get(slug=user_slug)
+
+    return render(request, "user_page.html", {"current_user": current_user})
