@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Корзина
+{% endblock %}
+
+{% block content %}
+    <p>Всего товаров: {{ cart|length }}</p>
+
+    {% for item in cart %}
+        <div>
+            <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a> - {{ item.product.price }}₽
+            <form method="post" action="{% url 'add_cart' item.product.id %}">
+                {{ item.update_count_form.count }}шт.
+                {{ item.update_count_form.override }}
+                {% csrf_token %}
+                <input type="submit" value="Обновить">
+            </form>
+            <img src="{{ item.product.image }}" alt="Изображение не найдено">
+        </div>
+    {% endfor %}
+
+    <p>Итоговая цена: {{ cart.get_total_price }}₽</p>
+
+{% endblock %}

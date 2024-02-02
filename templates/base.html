@@ -11,25 +11,32 @@
 	</head>
 
     <body>
+        <!-- HEADER -->
         <header class="header">
             <nav>
+                <!-- NAVIGATION -->
                 <ul class="navigation">
                     <li><a href="{% url 'home' %}">Главная</a></li>
+                    {% if user.is_authenticated %}
+                        <li>
+                            <!-- USER PROFILE -->
+                            <a href="{{ user.shopclient.get_absolute_url }}">{{ user.username }}</a> {{ user.shopclient.balance }}₽
+                            <!-- EXIT BUTTON -->
+                            <form action="{% url 'user_logout' %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="Выйти">
+                            </form>
+                        </li>
+                    {% else %}
+                        <!-- LOGIN BUTTON -->
+                        <li><a href="{% url 'user_login' %}">Войти</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'cart_detail' %}">Корзина ({{ cart|length }})</a></li>
                 </ul>
             </nav>
-
-            {% if user.is_authenticated %}
-                {{ user.username }}
-                <form action="{% url 'user_logout' %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="Выйти">
-                </form>
-{#                <a href="{% url 'user_logout' %}">Выйти</a>#}
-            {% else %}
-                <a href="{% url 'user_login' %}">Войти</a>
-            {% endif %}
         </header>
 
+        <!-- CONTENT BLOCK -->
 		{% block content %}
 		{% endblock content %}
 	</body>

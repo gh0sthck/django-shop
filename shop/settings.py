@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'purchases.apps.PurchasesConfig',
+    'cart.apps.CartConfig',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "cart.cart_ctx_processor.cart",
             ],
         },
     },
@@ -125,7 +127,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = Path(BASE_DIR, "media/")
+MEDIA_ROOT = Path(BASE_DIR, MEDIA_URL)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -135,3 +137,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "user_login"
 LOGOUT_URL = "user_logout"
 LOGIN_REDIRECT_URL = "/"
+
+CART_SESSION_ID = "cart"

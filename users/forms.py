@@ -18,4 +18,3 @@ class RegisterClientForm(forms.ModelForm):
             raise forms.ValidationError("Пароли не совпадают")
         else:
             return cd["password_repeat"]
-
