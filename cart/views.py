@@ -17,9 +17,6 @@ def add_cart(request: HttpRequest, product_id: int) -> HttpResponse:
         clean_data: dict = form.cleaned_data
         cart.add(product=product, count=clean_data["count"],
                  override_count=clean_data["override"])
-        return HttpResponse(f"{product}:{clean_data['count']} add to cart")
-    else:
-        print(form.errors.as_data())
 
     return redirect("cart_detail")
 
@@ -34,4 +31,9 @@ def cart_remove(request: HttpRequest, product_id: int) -> HttpResponse:
 
 def cart_detail(request: HttpRequest) -> HttpResponse:
     cart = Cart(request)
+    for item in cart:
+        item["update_count_form"] = CartAddProductForm(initial={
+            "count": item["count"], "override": True
+        })
+
     return render(request, "cart_detail.html", {"cart": cart})

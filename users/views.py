@@ -7,7 +7,6 @@ from users.models import ShopClient
 
 
 def user_register(request: HttpRequest) -> HttpResponse:
-    cart = Cart(request)
     if not request.user.is_authenticated:
         if request.method == "POST":
             form = RegisterClientForm(request.POST, request.FILES)
@@ -32,6 +31,5 @@ def user_register(request: HttpRequest) -> HttpResponse:
 
 def user_page(request: HttpRequest, user_slug) -> HttpResponse:
     current_user: ShopClient = ShopClient.objects.get(slug=user_slug)
-    cart = Cart(request)
 
-    return render(request, "user_page.html", {"current_user": current_user, "cart": cart})
+    return render(request, "user_page.html", {"current_user": current_user})

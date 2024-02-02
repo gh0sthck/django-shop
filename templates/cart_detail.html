@@ -9,7 +9,13 @@
 
     {% for item in cart %}
         <div>
-            {{ item.count }}шт. <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a> - {{ item.product.price }}₽
+            <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a> - {{ item.product.price }}₽
+            <form method="post" action="{% url 'add_cart' item.product.id %}">
+                {{ item.update_count_form.count }}шт.
+                {{ item.update_count_form.override }}
+                {% csrf_token %}
+                <input type="submit" value="Обновить">
+            </form>
             <img src="{{ item.product.image }}" alt="Изображение не найдено">
         </div>
     {% endfor %}

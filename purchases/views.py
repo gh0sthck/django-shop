@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpRequest
 
-from cart.cart import Cart
 from cart.forms import CartAddProductForm
 from .forms import CategoryForm, CreateProductForm
 from .models import Product, Category
@@ -16,7 +15,6 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     category = None
     product_list: QuerySet[Product] = Product.available_products.all()
     form = CategoryForm()
-    cart = Cart(request)
 
     if category_slug or "select_category" in request.GET:
         if "select_category" in request.GET:
@@ -27,15 +25,14 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
         categories = None
 
     return render(request, "home.html", {"products": product_list, "categories": categories,
-                                         "form": form, "category": category, "cart": cart})
+                                         "form": form, "category": category})
 
 
 def current_product(request: HttpRequest, slug) -> HttpResponse:
     product: Product = Product.available_products.get(slug=slug)
-    cart = Cart(request)
     cart_form = CartAddProductForm()
 
-    return render(request, "current_product.html", {"product": product, "cart_form": cart_form, "cart": cart})
+    return render(request, "current_product.html", {"product": product, "cart_form": cart_form})
 
 
 @login_required
