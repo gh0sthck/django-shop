@@ -31,6 +31,7 @@
                         <!-- LOGIN BUTTON -->
                         <li><a href="{% url 'user_login' %}">Войти</a></li>
                     {% endif %}
+                    <li><a href="{% url 'cart_detail' %}">Корзина ({{ cart|length }})</a></li>
                 </ul>
             </nav>
         </header>

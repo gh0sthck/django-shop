@@ -11,13 +11,15 @@ from purchases.models import Product
 def add_cart(request: HttpRequest, product_id: int) -> HttpResponse:
     cart = Cart(request)
     product = Product.objects.get(id=product_id)
-    form = CartAddProductForm()
+    form = CartAddProductForm(request.POST)
 
     if form.is_valid():
         clean_data: dict = form.cleaned_data
         cart.add(product=product, count=clean_data["count"],
                  override_count=clean_data["override"])
         return HttpResponse(f"{product}:{clean_data['count']} add to cart")
+    else:
+        print(form.errors.as_data())
 
     return redirect("cart_detail")
 

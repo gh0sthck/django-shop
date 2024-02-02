@@ -5,5 +5,15 @@
 {% endblock %}
 
 {% block content %}
-    {{ cart }}
+    <p>Всего товаров: {{ cart|length }}</p>
+
+    {% for item in cart %}
+        <div>
+            {{ item.count }}шт. <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a> - {{ item.product.price }}₽
+            <img src="{{ item.product.image }}" alt="Изображение не найдено">
+        </div>
+    {% endfor %}
+
+    <p>Итоговая цена: {{ cart.get_total_price }}₽</p>
+
 {% endblock %}

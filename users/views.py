@@ -1,11 +1,13 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 
+from cart.cart import Cart
 from users.forms import RegisterClientForm
 from users.models import ShopClient
 
 
-def user_register(request) -> HttpResponse:
+def user_register(request: HttpRequest) -> HttpResponse:
+    cart = Cart(request)
     if not request.user.is_authenticated:
         if request.method == "POST":
             form = RegisterClientForm(request.POST, request.FILES)
@@ -23,12 +25,13 @@ def user_register(request) -> HttpResponse:
         else:
             form = RegisterClientForm()
 
-        return render(request, "user_register.html", {"form": form})
+        return render(request, "user_register.html", {"form": form, "cart": cart})
     else:
         return redirect("home")
 
 
-def user_page(request, user_slug) -> HttpResponse:
+def user_page(request: HttpRequest, user_slug) -> HttpResponse:
     current_user: ShopClient = ShopClient.objects.get(slug=user_slug)
+    cart = Cart(request)
 
-    return render(request, "user_page.html", {"current_user": current_user})
+    return render(request, "user_page.html", {"current_user": current_user, "cart": cart})

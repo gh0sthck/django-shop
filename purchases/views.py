@@ -1,18 +1,22 @@
 from typing import Optional
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.db.models import QuerySet
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 
+from cart.cart import Cart
+from cart.forms import CartAddProductForm
 from .forms import CategoryForm, CreateProductForm
 from .models import Product, Category
 
 
-def home(request, category_slug=None) -> HttpResponse:
+def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     categories: Optional[QuerySet[Category]] = Category.objects.all()
     category = None
     product_list: QuerySet[Product] = Product.available_products.all()
     form = CategoryForm()
+    cart = Cart(request)
 
     if category_slug or "select_category" in request.GET:
         if "select_category" in request.GET:
@@ -23,16 +27,19 @@ def home(request, category_slug=None) -> HttpResponse:
         categories = None
 
     return render(request, "home.html", {"products": product_list, "categories": categories,
-                                         "form": form, "category": category})
+                                         "form": form, "category": category, "cart": cart})
 
 
-def current_product(request, slug) -> HttpResponse:
+def current_product(request: HttpRequest, slug) -> HttpResponse:
     product: Product = Product.available_products.get(slug=slug)
+    cart = Cart(request)
+    cart_form = CartAddProductForm()
 
-    return render(request, "current_product.html", {"product": product})
+    return render(request, "current_product.html", {"product": product, "cart_form": cart_form, "cart": cart})
 
 
-def create_product(request) -> HttpResponse:
+@login_required
+def create_product(request: HttpRequest) -> HttpResponse:
     if request.user.has_perms(["purchases.change_product", "purchases.add_product",
                                "purchases.delete_product"]):
         if request.method == "POST":
@@ -48,7 +55,8 @@ def create_product(request) -> HttpResponse:
         return HttpResponse("You haven't permissions to that operation")
 
 
-def edit_product(request, slug) -> HttpResponse:
+@login_required
+def edit_product(request: HttpRequest, slug) -> HttpResponse:
     if request.user.has_perms(["purchases.change_product", "purchases.add_product",
                                "purchases.delete_product"]):
         product: Product = Product.objects.get(slug=slug)
