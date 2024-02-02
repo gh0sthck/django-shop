@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'purchases.apps.PurchasesConfig',
+    'cart.apps.CartConfig',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "user_login"
 LOGOUT_URL = "user_logout"
 LOGIN_REDIRECT_URL = "/"
+
+CART_SESSION_ID = "cart"
