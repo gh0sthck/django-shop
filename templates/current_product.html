@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}</h1>
+    <h1>{{ product.name }}, {{ product_rate }}</h1>
     <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
     <h3>Цена: {{ product.price }} ₽</h3>
     <hr />
@@ -20,4 +20,27 @@
     </form>
     <img style="width: 30%; height:320px;" src="/media/{{ product.image }}" alt="Изображение продукта">
     <p>{{ product.description }}</p>
+
+    {% if user.is_authenticated %}
+            <h2>Напишите своё мнение о товаре!</h2>
+            <form method="post">
+                {{ comments_form.as_p }}
+                {% csrf_token %}
+                <input type="submit" value="Опубликовать">
+            </form>
+
+    {% else %}
+        <p><a href="{% url 'user_login' %}">Зарегистрируйтесь</a>, чтобы оставлять комментарии.</p>
+    {% endif %}
+
+    <h3>Отзывы (всего {{ comments|length }}шт.)</h3>
+    {% for comment in comments %}
+        <div class="comment">
+            <p>{{ comment.client.user.username }}</p>
+            <p>{{ comment.get_visual_rating }}</p>
+            <p>{{ comment.text }}</p>
+        </div>
+    {% endfor %}
+
+
 {% endblock %}

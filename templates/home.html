@@ -21,6 +21,7 @@
             <img style="width: 30%; height: 320px;" src="media/{{ product.image }}" alt="Изображение продукта">
             <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
             <p>{{ product.price }}₽</p>
+            <p>{{ product.get_rating }}</p>
         </div>
     {% endfor %}
 
