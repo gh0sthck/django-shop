@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Создание заказа
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+
+        <h3>Ваши товары:</h3>
+        <ul>
+            {% for item in cart %}
+                <li><a href="#">{{ item.product }}</a></li>
+            {% endfor %}
+            <p>Всего: {{ cart.get_total_price }}</p>
+        </ul>
+
+
+        {% if user.shopclient.balance < cart.get_total_price %}
+            <p>Внимание! Недостаточно средств на счету. Пополните баланс для покупки.</p>
+        {% else %}
+            <input type="submit" value="Оплатить">
+        {% endif %}
+
+    </form>
+{% endblock %}
