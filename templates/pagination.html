@@ -1,0 +1,13 @@
+<div class="pagination">
+
+    {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}{% if category %}&select_category={{ category }}{% endif %}"><-</a>
+    {% endif %}
+
+    <p>{{ page.number }} из {{ page.paginator.num_pages }}</p>
+
+    {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}{% if category %}&select_category={{ category }}{% endif %}">-></a>
+    {% endif %}
+
+</div>

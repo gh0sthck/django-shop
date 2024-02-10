@@ -1,6 +1,7 @@
 from typing import Optional
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpRequest
@@ -23,6 +24,16 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
             category = Category.objects.get(slug=category_slug)
         product_list = Product.available_products.filter(category=category)
         categories = None
+
+    paginator = Paginator(product_list, 4)
+    page_number = request.GET.get("page", 1)
+
+    try:
+        product_list = paginator.page(page_number)
+    except PageNotAnInteger:
+        product_list = paginator.page(1)
+    except EmptyPage:
+        product_list = paginator.page(paginator.num_pages)
 
     return render(request, "home.html", {"products": product_list, "categories": categories,
                                          "form": form, "category": category})
