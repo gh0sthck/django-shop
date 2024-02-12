@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <img src="{{ current_user.avatar }}" alt="Фото профиля нет">
+    <img src="{{ current_user.avatar.url }}" alt="Фото профиля нет">
     <h1>{{ current_user.user.username }}</h1>
 
 {% endblock %}

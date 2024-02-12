@@ -18,7 +18,8 @@
     {% for product in products %}
         <div class="product">
             <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
-            <img style="width: 30%; height: 320px;" src="media/{{ product.image }}" alt="Изображение продукта">
+            <img style="width: 30%; height: 320px;" src="{{ product.image.url }}" alt="Изображение продукта">
+            <h2>{{ product.image }}</h2>
             <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
             <p>{{ product.price }}₽</p>
             <p>{{ product.get_rating }}</p>
