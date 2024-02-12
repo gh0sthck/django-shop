@@ -22,16 +22,17 @@
                     {% if user.is_authenticated %}
                         <li class="navigation-profile">
                             <!-- USER PROFILE -->
-                            <a href="{{ user.shopclient.get_absolute_url }}">{{ user.username }}</a> {{ user.shopclient.balance }}₽
+                            <a href="{{ user.shopclient.get_absolute_url }}">{{ user.username }}</a>
+                            {{ user.shopclient.balance }}₽
                             <!-- EXIT BUTTON -->
-                            <form action="{% url 'user_logout' %}" method="post">
+                            <form class="exit-form" action="{% url 'user_logout' %}" method="post">
                                 {% csrf_token %}
-                                <input type="submit" value="Выйти">
+                                <input class="main_button" type="submit" value="Выйти">
                             </form>
                         </li>
                     {% else %}
                         <!-- LOGIN BUTTON -->
-                        <li><a href="{% url 'user_login' %}">Войти</a></li>
+                        <li><a href="{% url 'user_login' %}" class="main_button">Войти</a></li>
                     {% endif %}
                     <li><a href="{% url 'cart_detail' %}">Корзина ({{ cart|length }})</a></li>
                 </ul>
@@ -40,10 +41,12 @@
         </header>
 
         <!-- CONTENT BLOCK -->
-		<div class="container">
-            {% block content %}
-            {% endblock content %}
-        </div>
+		<main class="main">
+            <div class="container">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </main>
 	</body>
 
 </html>
