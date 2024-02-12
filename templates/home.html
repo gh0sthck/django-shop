@@ -15,17 +15,24 @@
         <h1>Товары категории {{ category.name }}</h1>
     {% endif %}
 
-    {% for product in products %}
-        <div class="product">
-            <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
-            <img style="width: 30%; height: 320px;" src="{{ product.image.url }}" alt="Изображение продукта">
-            <h2>{{ product.image }}</h2>
-            <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
-            <p>{{ product.price }}₽</p>
-            <p>{{ product.get_rating }}</p>
-        </div>
-    {% endfor %}
+    {% if products %}
+        {% for product in products %}
+            <div class="product">
+                <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
+                <img style="width: 30%; height: 320px;" src="{{ product.image.url }}" alt="Изображение продукта">
+                <h2>{{ product.image }}</h2>
+                <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
+                <p>{{ product.price }}₽</p>
+                <p>{{ product.get_rating }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>Простите, но, продуктов пока нет :(</h3>
+    {% endif %}
 
-    {% include "pagination.html" with page=products category=category %}
+    {% if products.paginator.num_pages > 1 %}
+        {% include "pagination.html" with page=products category=category %}
+    {% endif %} 
+
 
 {% endblock %}

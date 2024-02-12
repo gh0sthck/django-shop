@@ -7,18 +7,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<title>{% block title %} {% endblock title %}</title>
-		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
 	</head>
 
     <body>
         <!-- HEADER -->
         <header class="header">
-            <nav>
+            <div class="container">
+                <nav>
                 <!-- NAVIGATION -->
                 <ul class="navigation">
                     <li><a href="{% url 'home' %}">Главная</a></li>
                     {% if user.is_authenticated %}
-                        <li>
+                        <li class="navigation-profile">
                             <!-- USER PROFILE -->
                             <a href="{{ user.shopclient.get_absolute_url }}">{{ user.username }}</a> {{ user.shopclient.balance }}₽
                             <!-- EXIT BUTTON -->
@@ -33,12 +35,15 @@
                     {% endif %}
                     <li><a href="{% url 'cart_detail' %}">Корзина ({{ cart|length }})</a></li>
                 </ul>
-            </nav>
+                </nav>
+            </div>
         </header>
 
         <!-- CONTENT BLOCK -->
-		{% block content %}
-		{% endblock content %}
+		<div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
 	</body>
 
 </html>
