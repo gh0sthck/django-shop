@@ -60,7 +60,7 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
         if user_comment:
             comments_form = CommentsForm(instance=user_comment[0])
         else:
-            comments_form = CommentsForm
+            comments_form = CommentsForm()
 
     return render(request, "current_product.html", {"product": product, "cart_form": cart_form,
                                                     "comments_form": comments_form, "comments": comments,

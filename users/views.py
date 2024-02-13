@@ -1,7 +1,6 @@
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 
-from cart.cart import Cart
 from users.forms import RegisterClientForm
 from users.models import ShopClient
 

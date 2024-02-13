@@ -13,7 +13,7 @@ class Category(models.Model):
     slug = models.SlugField(max_length=128, unique=True, verbose_name="Слаг")
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["-name"]
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
@@ -38,7 +38,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, related_name="products",
                                  on_delete=models.CASCADE, verbose_name="Категория")
     name = models.CharField(max_length=128, verbose_name="Имя")
-    slug = models.SlugField(max_length=128, verbose_name="Слаг")
+    slug = models.SlugField(max_length=128, verbose_name="Слаг", unique=True)
     image = models.ImageField(upload_to="products/", blank=True)
     description = models.TextField(blank=True, verbose_name="Описание")
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -47,7 +47,7 @@ class Product(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["-name"]
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 
