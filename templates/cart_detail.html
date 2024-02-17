@@ -16,7 +16,7 @@
                 {% csrf_token %}
                 <input type="submit" value="Обновить">
             </form>
-            <img src="{{ item.product.image }}" alt="Изображение не найдено">
+            <img src="{{ item.product.image.url }}" alt="Изображение не найдено">
         </div>
     {% endfor %}
 
