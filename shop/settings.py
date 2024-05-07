@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 
-from django.conf.global_settings import AUTH_USER_MODEL
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -33,7 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'users.apps.UsersConfig',
     'purchases.apps.PurchasesConfig',
     'cart.apps.CartConfig',
     'orders.apps.OrdersConfig',
