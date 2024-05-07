@@ -20,7 +20,7 @@ services:
     container_name: postgres
     image: postgres:16.2-alpine3.19
     volumes:
-      - pgdata:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data/pgadata
     ports:
       - 5432:5432
     environment:
