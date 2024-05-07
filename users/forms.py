@@ -1,15 +1,15 @@
 from django import forms
-from django.contrib.auth.models import User
+
+from .models import ShopClient
 
 
 class RegisterClientForm(forms.ModelForm):
-    avatar = forms.ImageField(label="Фото профиля")
     gender = forms.ChoiceField(choices={"f": "Женский", "m": "Мужской"}, label="Пол")
     password = forms.CharField(min_length=8, label="Пароль", widget=forms.PasswordInput)
     password_repeat = forms.CharField(min_length=8, label="Повтор пароля", widget=forms.PasswordInput)
 
     class Meta:
-        model = User
+        model = ShopClient
         fields = ["username", "email", "avatar", "gender", "password"]
 
     def clean_password_repeat(self):

@@ -5,5 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <p>Добро пожаловать к нам, {{ new_client.user.username }}</p>
+    {% if new_client %}
+        <p>Добро пожаловать к нам, {{ new_client.username }}</p>
+    {% else %}
+        <p>При регистрации нового пользователя произошла ошибка :\</p>
+    {% endif %}
 {% endblock %}

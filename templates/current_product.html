@@ -36,7 +36,7 @@
     <h3>Отзывы (всего {{ comments|length }}шт.)</h3>
     {% for comment in comments %}
         <div class="comment">
-            <p>{{ comment.client.user.username }}</p>
+            <p>{{ comment.client.username }}</p>
             <p>{{ comment.get_visual_rating }}</p>
             <p>{{ comment.text }}</p>
         </div>

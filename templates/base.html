@@ -22,8 +22,8 @@
                     {% if user.is_authenticated %}
                         <li class="navigation-profile">
                             <!-- USER PROFILE -->
-                            <a href="{{ user.shopclient.get_absolute_url }}">{{ user.username }}</a>
-                            {{ user.shopclient.balance }}₽
+                            <a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+                            {{ user.balance }}₽
                             <!-- EXIT BUTTON -->
                             <form class="exit-form" action="{% url 'user_logout' %}" method="post">
                                 {% csrf_token %}
