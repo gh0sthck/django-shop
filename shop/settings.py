@@ -82,9 +82,10 @@ WSGI_APPLICATION = 'shop.wsgi.application'
 
 load_dotenv()
 
-db_name = os.getenv("DB_DATABASE")
+db_name = os.getenv("DB_NAME")
 db_user = os.getenv("DB_USER")
 db_pass = os.getenv("DB_PASSWD")
+db_host = os.getenv("DB_HOST")
 
 DATABASES = {
     'default': {
@@ -92,7 +93,7 @@ DATABASES = {
         'NAME': db_name,
         'USER': db_user,
         'PASSWORD': db_pass,
-        'HOST': "localhost",
+        'HOST': db_host,
     }
 }
 

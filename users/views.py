@@ -23,7 +23,7 @@ def user_register(request: HttpRequest) -> HttpResponse:
         else:
             form = RegisterClientForm()
 
-        return render(request, "user_register.html", {"form": form, "cart": cart})
+        return render(request, "user_register.html", {"form": form})
     else:
         return redirect("home")
 
