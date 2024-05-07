@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from users.models import ShopClient
+from .models import ShopClient
 
 
 @admin.register(ShopClient)

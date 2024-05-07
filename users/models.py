@@ -21,8 +21,12 @@ class ShopClient(AbstractUser):
         return reverse("user_page", args=[self.slug])
 
     def __str__(self) -> str:
-        return f"client {self.user.username}"
+        return f"{self.username}: {self.email}"
+    
+    def __repr__(self) -> str:
+        return f"<ShopClient: {self.username}-{self.email}>"
 
     class Meta:
+        ordering = ["-username"]
         verbose_name = "Покупатель"
         verbose_name_plural = "Покупатели"
