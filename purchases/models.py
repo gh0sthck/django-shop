@@ -9,14 +9,27 @@ from pytils.translit import slugify
 from users.models import ShopClient
 
 
-class Category(models.Model):
+class PruchasessPermissions:
+    MODEL_NAME = "name"
+
+    @classmethod
+    def get_permissions(cls) -> List[str]:
+        return [
+            f"purchases.change_{cls.MODEL_NAME}",
+            f"purchases.add_{cls.MODEL_NAME}",
+            f"purchases.delete_{cls.MODEL_NAME}",
+        ]
+
+
+class AvailableProductManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter().filter(available=True)
+
+
+class Category(models.Model, PruchasessPermissions):
+    MODEL_NAME = "category"
     name = models.CharField(max_length=128, verbose_name="Имя")
     slug = models.SlugField(max_length=128, unique=True, verbose_name="Слаг")
-
-    class Meta:
-        ordering = ["-name"]
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -29,21 +42,17 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    @staticmethod
-    def get_permissions() -> List[str]:
-        return [
-            "purchases.change_category",
-            "purchases.add_category",
-            "purchases.delete_category",
-        ]
+    def __repr__(self) -> str:
+        return f"<Category: {self.name}>"
+
+    class Meta:
+        ordering = ["-name"]
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 
-class AvailableProductManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter().filter(available=True)
-
-
-class Product(models.Model):
+class Product(models.Model, PruchasessPermissions):
+    MODEL_NAME = "product"
     category = models.ForeignKey(
         Category,
         related_name="products",
@@ -59,10 +68,11 @@ class Product(models.Model):
     create = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        ordering = ["-name"]
-        verbose_name = "Товар"
-        verbose_name_plural = "Товары"
+    objects = models.Manager()
+    available_products = AvailableProductManager()
+
+    def get_rating(self) -> Decimal:
+        return self.rating.get(product=self).product_rating
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -72,22 +82,16 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("product", args=[self.slug])
 
-    objects = models.Manager()
-    available_products = AvailableProductManager()
-
-    def get_rating(self) -> Decimal:
-        return self.rating.get(product=self).product_rating
-
     def __str__(self) -> str:
         return self.name
 
-    @staticmethod
-    def get_permissions() -> List[str]:
-        return [
-            "purchases.change_product",
-            "purchases.add_product",
-            "purchases.delete_product",
-        ]
+    def __repr__(self) -> str:
+        return f"<Product: {self.name}>"
+
+    class Meta:
+        ordering = ["-name"]
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
 
 
 class Comments(models.Model):
@@ -105,24 +109,32 @@ class Comments(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    @staticmethod
+    def get_product_rating(product: Product):
+        """Return product decimal rating by specific Product."""
+        product_comments = Comments.objects.filter(product=product)
+        return (
+            round(sum(comment.rating for comment in product_comments) / len(product_comments), 2)
+            if product_comments
+            else 0
+        )
+
+    def get_visual_rating(self) -> str:
+        """Return Comment raiting in emoji hearts."""
+        if self.rating > 0:
+            return "💜" * self.rating
+        return "🖤🖤🖤🖤🖤"
+
+    def __str__(self) -> str:
+        return f"{self.product}: {self.text}"
+
+    def __repr__(self) -> str:
+        return f"<Comment: {self.product}-{self.text}>"
+
     class Meta:
         ordering = ["-created"]
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-
-    def get_visual_rating(self) -> str:
-        if self.rating > 0:
-            return "💜" * self.rating
-        else:
-            return "🖤🖤🖤🖤🖤"
-
-    @staticmethod
-    def get_product_rating(product: Product):
-        current = Comments.objects.filter(product=product)
-        return round(sum(c.rating for c in current) / len(current), 2) if current else 0
-
-    def __str__(self) -> str:
-        return f"{self.product}: {self.text}"
 
 
 class Rating(models.Model):
@@ -131,10 +143,13 @@ class Rating(models.Model):
     )
     product_rating = models.DecimalField(default=0.0, max_digits=2, decimal_places=1)
 
+    def __str__(self) -> str:
+        return f"{self.product}: {self.product_rating}"
+    
+    def __repr__(self) -> str:
+        return f"<Rating: {self.product}-{self.product_rating}>"
+
     class Meta:
         ordering = ["-product_rating"]
         verbose_name = "Рейтинг"
         verbose_name_plural = "Рейтинги"
-
-    def __str__(self) -> str:
-        return f"{self.product}: {self.product_rating}"
