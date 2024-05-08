@@ -7,6 +7,10 @@
 {% block content %}
     <h1>{{ product.name }}, {{ product_rate }}</h1>
     <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+    {% if user.is_superuser %}
+        <a href="{% url "edit_product" product.slug %}">Изменить</a>
+    {% endif %}
+    
     <h3>Цена: {{ product.price }} ₽</h3>
     <hr />
     <form action="{% url 'add_cart' product.id %}" method="post">

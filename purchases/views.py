@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpRequest
+from django.views.generic import CreateView, UpdateView
 
 from cart.forms import CartAddProductForm
 from .forms import CategoryForm, CreateProductForm, CommentsForm
@@ -45,17 +46,21 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
     cart_form = CartAddProductForm()
     comments: Comments = Comments.objects.filter(product=product)
     product_rate = Comments.get_product_rating(product)
-    user_comment = Comments.objects.filter(product=product, client=request.user.shopclient)
+    if request.user.is_authenticated:
+        user_comment = Comments.objects.filter(product=product, client=request.user)
+    else:
+        user_comment = None
 
     if request.method == "POST":
-        comments_form = CommentsForm(request.POST, instance=user_comment[0] if user_comment else None)
-        if comments_form.is_valid() and comments_form.has_changed():
-            comment: Comments = comments_form.save(commit=False)
-            comment.client = request.user.shopclient
-            comment.product = product
-            comment.save()
-            Rating.objects.filter(product=product).update(product_rating=Comments.get_product_rating(product))
-            return redirect("product", slug=slug)
+        if user_comment:
+            comments_form = CommentsForm(request.POST, instance=user_comment[0] if user_comment else None)
+            if comments_form.is_valid() and comments_form.has_changed():
+                comment: Comments = comments_form.save(commit=False)
+                comment.client = request.user
+                comment.product = product
+                comment.save()
+                Rating.objects.filter(product=product).update(product_rating=Comments.get_product_rating(product))
+        return redirect("product", slug=slug)
     else:
         if user_comment:
             comments_form = CommentsForm(instance=user_comment[0])
@@ -67,37 +72,25 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
                                                     "product_rate": product_rate})
 
 
-@login_required
-def create_product(request: HttpRequest) -> HttpResponse:
-    if request.user.has_perms(["purchases.change_product", "purchases.add_product",
-                               "purchases.delete_product"]):
-        if request.method == "POST":
-            form = CreateProductForm(request.POST, request.FILES)
-            if form.is_valid():
-                product = form.save()
-                Rating.objects.create(product=product, product_rating=0.0)
-                return redirect("home")
+class CreateProduct(CreateView):
+    model = Product
+    form_class = CreateProductForm
+    template_name = "create_product.html"
+    
+    def get(self, request, *args, **kwargs):
+        if request.user.has_perms(Product.get_permissions()):
+            return super(CreateProduct, self).get(request, *args, **kwargs)
         else:
-            form = CreateProductForm()
-
-        return render(request, "create_product.html", {"form": form})
-    else:
-        return HttpResponse("You haven't permissions to that operation")
+            return redirect("home")
 
 
-@login_required
-def edit_product(request: HttpRequest, slug) -> HttpResponse:
-    if request.user.has_perms(["purchases.change_product", "purchases.add_product",
-                               "purchases.delete_product"]):
-        product: Product = Product.objects.get(slug=slug)
-        if request.method == "POST":
-            form = CreateProductForm(request.POST, request.FILES, instance=product)
-            if form.has_changed():
-                form.save()
-                return redirect("home")
+class EditProduct(UpdateView):
+    model = Product
+    form_class = CreateProductForm
+    template_name = "create_product.html"
+    
+    def get(self, request: HttpRequest, *args, **kwargs):
+        if request.user.has_perms(Product.get_permissions()):
+            return super(EditProduct, self).get(request, *args, **kwargs)
         else:
-            form = CreateProductForm(instance=product)
-
-        return render(request, "create_product.html", {"form": form})
-    else:
-        return HttpResponse("You haven't permissions to that operation")
+            return redirect("home")

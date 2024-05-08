@@ -9,10 +9,10 @@ from users.models import ShopClient
 class UserRegister(View):
     form = RegisterClientForm()
     template_name = "user_register.html"
-    template_name_done = "user_registration_done.html"
+    template_name_done = "user_register_done.html"
 
     def get(self, request):
-        if request.user.is_authenticated:
+        if not request.user.is_authenticated:
             return render(request, self.template_name, {"form": self.form})
         else:
             return redirect("home")

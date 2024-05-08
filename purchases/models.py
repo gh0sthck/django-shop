@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import List
 
 from django.db import models
 from django.urls import reverse
@@ -35,8 +36,12 @@ class AvailableProductManager(models.Manager):
 
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, related_name="products",
-                                 on_delete=models.CASCADE, verbose_name="Категория")
+    category = models.ForeignKey(
+        Category,
+        related_name="products",
+        on_delete=models.CASCADE,
+        verbose_name="Категория",
+    )
     name = models.CharField(max_length=128, verbose_name="Имя")
     slug = models.SlugField(max_length=128, verbose_name="Слаг", unique=True)
     image = models.ImageField(upload_to="products/", blank=True)
@@ -68,12 +73,25 @@ class Product(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    @staticmethod
+    def get_permissions() -> List[str]:
+        return [
+            "purchases.change_product",
+            "purchases.add_product",
+            "purchases.delete_product",
+        ]
+
 
 class Comments(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments",
-                                verbose_name="Товар")
-    client = models.ForeignKey(ShopClient, on_delete=models.CASCADE, related_name="comments_client",
-                               verbose_name="Клиент")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="comments", verbose_name="Товар"
+    )
+    client = models.ForeignKey(
+        ShopClient,
+        on_delete=models.CASCADE,
+        related_name="comments_client",
+        verbose_name="Клиент",
+    )
     text = models.TextField(verbose_name="Текст комментария")
     rating = models.IntegerField(default=0, verbose_name="Оценка товара")
     created = models.DateTimeField(auto_now_add=True)
@@ -100,7 +118,9 @@ class Comments(models.Model):
 
 
 class Rating(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="rating")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="rating"
+    )
     product_rating = models.DecimalField(default=0.0, max_digits=2, decimal_places=1)
 
     class Meta:
