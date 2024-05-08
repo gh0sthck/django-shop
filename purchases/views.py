@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpRequest
 from django.views.generic import CreateView, UpdateView
 
 from cart.forms import CartAddProductForm
-from .forms import CategoryForm, CreateProductForm, CommentsForm
+from .forms import CategoryForm, CreateCategoryForm, CreateProductForm, CommentsForm
 from .models import Product, Category, Comments, Rating
 
 
@@ -37,8 +37,17 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     except EmptyPage:
         product_list = paginator.page(paginator.num_pages)
 
-    return render(request, "home.html", {"products": product_list, "categories": categories,
-                                         "form": form, "category": category, "ratings": ratings})
+    return render(
+        request,
+        "home.html",
+        {
+            "products": product_list,
+            "categories": categories,
+            "form": form,
+            "category": category,
+            "ratings": ratings,
+        },
+    )
 
 
 def current_product(request: HttpRequest, slug) -> HttpResponse:
@@ -46,6 +55,7 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
     cart_form = CartAddProductForm()
     comments: Comments = Comments.objects.filter(product=product)
     product_rate = Comments.get_product_rating(product)
+
     if request.user.is_authenticated:
         user_comment = Comments.objects.filter(product=product, client=request.user)
     else:
@@ -53,13 +63,17 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
 
     if request.method == "POST":
         if user_comment:
-            comments_form = CommentsForm(request.POST, instance=user_comment[0] if user_comment else None)
+            comments_form = CommentsForm(
+                request.POST, instance=user_comment[0] if user_comment else None
+            )
             if comments_form.is_valid() and comments_form.has_changed():
                 comment: Comments = comments_form.save(commit=False)
                 comment.client = request.user
                 comment.product = product
                 comment.save()
-                Rating.objects.filter(product=product).update(product_rating=Comments.get_product_rating(product))
+                Rating.objects.filter(product=product).update(
+                    product_rating=Comments.get_product_rating(product)
+                )
         return redirect("product", slug=slug)
     else:
         if user_comment:
@@ -67,19 +81,39 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
         else:
             comments_form = CommentsForm()
 
-    return render(request, "current_product.html", {"product": product, "cart_form": cart_form,
-                                                    "comments_form": comments_form, "comments": comments,
-                                                    "product_rate": product_rate})
+    return render(
+        request,
+        "current_product.html",
+        {
+            "product": product,
+            "cart_form": cart_form,
+            "comments_form": comments_form,
+            "comments": comments,
+            "product_rate": product_rate,
+        },
+    )
 
 
 class CreateProduct(CreateView):
     model = Product
     form_class = CreateProductForm
     template_name = "create_product.html"
-    
+
     def get(self, request, *args, **kwargs):
         if request.user.has_perms(Product.get_permissions()):
             return super(CreateProduct, self).get(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
+class CreateCategory(CreateView):
+    model = Category
+    form_class = CreateCategoryForm
+    template_name = "create_category.html"
+    
+    def get(self, request, *args, **kwargs):
+        if request.user.has_perms(Category.get_permissions()):
+            return super(CreateCategory, self).get(request, *args, **kwargs)
         else:
             return redirect("home")
 
@@ -88,7 +122,7 @@ class EditProduct(UpdateView):
     model = Product
     form_class = CreateProductForm
     template_name = "create_product.html"
-    
+
     def get(self, request: HttpRequest, *args, **kwargs):
         if request.user.has_perms(Product.get_permissions()):
             return super(EditProduct, self).get(request, *args, **kwargs)

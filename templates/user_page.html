@@ -5,7 +5,15 @@
 {% endblock %}
 
 {% block content %}
+    
     <img src="{{ current_user.avatar }}" alt="Фото профиля нет">
     <h1>{{ current_user.username }}</h1>
+    
+    {% if user.is_superuser %}
+        <p>Администратор</p>
+        <p><a href="{% url "create_product" %}">Добавить продукт</a></p>
+        <p><a href="{% url "create_category" %}">Добавить категорию</a></p>
+    {% endif %}
+
 
 {% endblock %}

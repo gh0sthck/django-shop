@@ -29,6 +29,14 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    @staticmethod
+    def get_permissions() -> List[str]:
+        return [
+            "purchases.change_category",
+            "purchases.add_category",
+            "purchases.delete_category",
+        ]
+
 
 class AvailableProductManager(models.Manager):
     def get_queryset(self):

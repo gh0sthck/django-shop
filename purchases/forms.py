@@ -19,6 +19,12 @@ class CreateProductForm(forms.ModelForm):
         fields = ["category", "name", "image", "description", "price", "available"]
 
 
+class CreateCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ["name"]
+
+
 class CommentsForm(forms.ModelForm):
     rating = forms.TypedChoiceField(
         empty_value=0,
