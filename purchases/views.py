@@ -1,22 +1,22 @@
 from typing import Optional
 
-from django.contrib.auth.decorators import login_required
+from django.core.management import CommandError
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpRequest
-from django.views.generic import CreateView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, UpdateView
 
 from cart.forms import CartAddProductForm
 from .forms import CategoryForm, CreateCategoryForm, CreateProductForm, CommentsForm
-from .models import Product, Category, Comments, Rating
+from .models import Product, Category, Comments
 
 
 def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     categories: Optional[QuerySet[Category]] = Category.objects.all()
     category = None
     product_list: QuerySet[Product] = Product.available_products.all()
-    ratings = Rating.objects.all()
     form = CategoryForm()
 
     if category_slug or "select_category" in request.GET:
@@ -45,7 +45,6 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
             "categories": categories,
             "form": form,
             "category": category,
-            "ratings": ratings,
         },
     )
 
@@ -54,32 +53,18 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
     product: Product = Product.available_products.get(slug=slug)
     cart_form = CartAddProductForm()
     comments: Comments = Comments.objects.filter(product=product)
-    product_rate = Comments.get_product_rating(product)
-
-    if request.user.is_authenticated:
-        user_comment = Comments.objects.filter(product=product, client=request.user)
-    else:
-        user_comment = None
+    user_comment: Optional[Comments] = product.get_user_comment(request.user)
+    comments_form = CommentsForm(instance=user_comment)
 
     if request.method == "POST":
-        if user_comment:
-            comments_form = CommentsForm(
-                request.POST, instance=user_comment[0] if user_comment else None
-            )
-            if comments_form.is_valid() and comments_form.has_changed():
-                comment: Comments = comments_form.save(commit=False)
-                comment.client = request.user
-                comment.product = product
-                comment.save()
-                Rating.objects.filter(product=product).update(
-                    product_rating=Comments.get_product_rating(product)
-                )
+        comments_form = CommentsForm(request.POST, instance=user_comment)
+        if comments_form.is_valid() and comments_form.has_changed():
+            comment: Comments = comments_form.save(commit=False)
+            comment.client = request.user
+            comment.product = product
+            comment.save()
+            product.save()  # Update product rating after commenting
         return redirect("product", slug=slug)
-    else:
-        if user_comment:
-            comments_form = CommentsForm(instance=user_comment[0])
-        else:
-            comments_form = CommentsForm()
 
     return render(
         request,
@@ -89,7 +74,6 @@ def current_product(request: HttpRequest, slug) -> HttpResponse:
             "cart_form": cart_form,
             "comments_form": comments_form,
             "comments": comments,
-            "product_rate": product_rate,
         },
     )
 
@@ -110,7 +94,7 @@ class CreateCategory(CreateView):
     model = Category
     form_class = CreateCategoryForm
     template_name = "create_category.html"
-    
+
     def get(self, request, *args, **kwargs):
         if request.user.has_perms(Category.get_permissions()):
             return super(CreateCategory, self).get(request, *args, **kwargs)
@@ -128,3 +112,15 @@ class EditProduct(UpdateView):
             return super(EditProduct, self).get(request, *args, **kwargs)
         else:
             return redirect("home")
+
+
+class DeleteProduct(DeleteView):
+    model = Product
+    template_name = "confirm_delete.html"
+    success_url = reverse_lazy("home")
+
+
+class DeleteCategory(DeleteView):
+    model = Category
+    template_name = "confirm_delete.html"
+    success_url = reverse_lazy("home")

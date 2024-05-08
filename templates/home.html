@@ -13,18 +13,29 @@
         <h1>Все товары</h1>
     {% else %}
         <h1>Товары категории {{ category.name }}</h1>
+        {% if user.is_superuser and category %}
+            <a href="{% url "delete_category" category.slug %}">Удалить категорию</a>
+        {% endif %}
+    {% endif %}
+
+    {% if user.is_superuser %}
+        <a href="{% url "create_category" %}">Создать категорию</a>
+        <a href="{% url "create_product" %}">Создать товар</a>
     {% endif %}
 
     {% if products %}
         <div class="products">
             {% for product in products %}
                 <div class="product">
-                    <img style="width: 30%; height: 320px;" src="{{ product.image.url }}" alt="Изображение продукта">
+                    <img style="width: 30%; height: 320px;" src="{{ product.image }}" alt="Изображение продукта">
                     <div class="product_info">
-                        <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a>, {{ product.get_rating }}</h2>
+                        <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a>, {{ product.rating }} {{ product.get_visual_rating }}</h2>
                         <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
                         <p>{{ product.price }}₽</p>
-
+                        {% if user.is_superuser %}
+                            <a href="{% url "edit_product" product.slug %}">Изменить</a>
+                            <a href="{% url "delete_product" product.slug %}">Удалить</a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

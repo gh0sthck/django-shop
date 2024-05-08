@@ -5,11 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}, {{ product_rate }}</h1>
+    <h1>{{ product.name }}, {{ product.rating }} {{ product.get_visual_rating }}</h1>
     <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
-    {% if user.is_superuser %}
-        <a href="{% url "edit_product" product.slug %}">Изменить</a>
-    {% endif %}
     
     <h3>Цена: {{ product.price }} ₽</h3>
     <hr />
@@ -22,7 +19,7 @@
         {% csrf_token %}
         <input type="submit" value="Удалить из корзины">
     </form>
-    <img style="width: 30%; height:320px;" src="{{ product.image.url }}" alt="Изображение продукта">
+    <img style="width: 30%; height:320px;" src="{{ product.image }}" alt="Изображение продукта">
     <p>{{ product.description }}</p>
 
     {% if user.is_authenticated %}
@@ -41,7 +38,7 @@
     {% for comment in comments %}
         <div class="comment">
             <p>{{ comment.client.username }}</p>
-            <p>{{ comment.get_visual_rating }}</p>
+            <p>{{ product.get_visual_rating }}</p>
             <p>{{ comment.text }}</p>
         </div>
     {% endfor %}
