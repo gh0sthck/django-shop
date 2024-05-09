@@ -33,7 +33,7 @@ class CommentsForm(forms.ModelForm):
         coerce=int,
         label="",
     )
-
+    
     class Meta:
         model = Comments
         fields = ["text", "rating"]

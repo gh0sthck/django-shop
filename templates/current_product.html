@@ -5,43 +5,57 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}, {{ product.rating }} {{ product.get_visual_rating }}</h1>
-    <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
-    
-    <h3>Цена: {{ product.price }} ₽</h3>
-    <hr />
-    <form action="{% url 'add_cart' product.id %}" method="post">
-        {{ cart_form.as_p }}
-        {% csrf_token %}
-        <input type="submit" value="Добавить в корзину">
-    </form>
-    <form method="post" action="{% url 'remove_cart' product.id %}">
-        {% csrf_token %}
-        <input type="submit" value="Удалить из корзины">
-    </form>
-    <img style="width: 30%; height:320px;" src="{{ product.image.url }}" alt="Изображение продукта">
-    <p>{{ product.description }}</p>
+    <div class="current_product">
+        <div class="current_product_image">
+            <img style="width: 30%; height:320px;" src="{{ product.image.url }}" alt="Изображение продукта">
+        </div>
+        <div class="current_product_info">
+            <h1>{{ product.name }} - {{ product.rating }} {{ product.get_visual_rating }}</h1>
+            <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+            <h3>Цена: {{ product.price }} ₽</h3>
 
-    {% if user.is_authenticated %}
+            <div class="current_product_buttons">
+                <form action="{% url 'add_cart' product.id %}" method="post">
+                    {{ cart_form.as_p }}
+                    {% csrf_token %}
+                    <input type="submit" value="Добавить в корзину">
+                </form>
+    
+                <form method="post" action="{% url 'remove_cart' product.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="Удалить из корзины">
+                </form>
+            </div>
+
+            <h3>Описание:</h3>
+            <p>{{ product.description }}</p>
+        </div>
+        
+    </div>
+
+    <div class="create_comments">
+        {% if user.is_authenticated %}
             <h2>Напишите своё мнение о товаре!</h2>
+            <hr />
             <form method="post">
                 {{ comments_form.as_p }}
                 {% csrf_token %}
                 <input type="submit" value="Опубликовать">
             </form>
+        {% else %}
+            <p><a href="{% url 'user_login' %}">Зарегистрируйтесь</a>, чтобы оставлять комментарии.</p>
+        {% endif %}
+    </div>
 
-    {% else %}
-        <p><a href="{% url 'user_login' %}">Зарегистрируйтесь</a>, чтобы оставлять комментарии.</p>
-    {% endif %}
-
-    <h3>Отзывы (всего {{ comments|length }}шт.)</h3>
-    {% for comment in comments %}
-        <div class="comment">
-            <p>{{ comment.client.username }}</p>
-            <p>{{ product.get_visual_rating }}</p>
-            <p>{{ comment.text }}</p>
-        </div>
-    {% endfor %}
+   <div class="comments">
+        <h3>Отзывы (всего {{ comments|length }}шт.)</h3>
+        {% for comment in comments %}
+            <div class="comment">
+                <h4>{{ comment.client.username }} {{ product.get_visual_rating }}</h4>
+                <p>{{ comment.text }}</p>
+            </div>
+        {% endfor %}
+   </div>
 
 
 {% endblock %}
