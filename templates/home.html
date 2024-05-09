@@ -30,7 +30,7 @@
                     <img style="width: 30%; height: 320px;" src="{{ product.image.url }}" alt="Изображение продукта">
                     <div class="product_info">
                         <h2><a href="{{ product.get_absolute_url }}">{{ product.name }}</a>, {{ product.rating }} {{ product.get_visual_rating }}</h2>
-                        <p>{{ product.description|linebreaks|truncatewords:30 }}</p>
+                        <p>{{ product.description|linebreaks|truncatewords:10 }}</p>
                         <p>{{ product.price }}₽</p>
                         {% if user.is_superuser %}
                             <a href="{% url "edit_product" product.slug %}">Изменить</a>

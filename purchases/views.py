@@ -26,7 +26,7 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
         product_list = Product.available_products.filter(category=category)
         categories = None
 
-    paginator = Paginator(product_list, 4)
+    paginator = Paginator(product_list, 6)
     page_number = request.GET.get("page", 1)
 
     try:

@@ -65,7 +65,7 @@ class Product(models.Model, PruchasessPermissions):
         upload_to="products/",
         blank=True,
         null=True,
-        default="test_icon.png",
+        default="not_found.png",
         validators=[FileExtensionValidator(["png", "jpg", "jpeg"])],
     )
     description = models.TextField(blank=True, verbose_name="Описание")

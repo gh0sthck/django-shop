@@ -29,6 +29,7 @@
 
 .header {
     background-color: #0e0e0e;
+    /* background-color: rgba(12, 12, 12, 0.3);  */
     height: 5rem;
     width: 100%;
     display: flex;
@@ -37,18 +38,15 @@
 }
 
 .main {
-    background-image: linear-gradient(rgba(12, 12, 12, 0.5), rgba(12, 12, 12, 0.5)), url("images/backgroundimage.jpg");
+    background-image: linear-gradient(rgba(12, 12, 12, 0.7), rgba(12, 12, 12, 0.5)), url("images/backgroundimage.jpg");
     width: 100%;
-    height: 100vh;
-    padding-top: 30px;
+    min-height: 100vh;
 }
 
 .main > .container {
-    background-color: rgba(12, 12, 12, 1); /* , 98% */
-    min-height: 100%;
-    border-radius: 50px;
+    background-color: rgba(12, 12, 12, 0.96); /* , 98% */
     padding: 50px;
-
+    min-height: 100vh;
 }
 
 .main_button {
@@ -70,13 +68,16 @@
 .product {
     background-color: #252525;
     max-width: 30%;
-    /*display: flex;*/
     padding: 20px;
+    margin: 20px 0 20px 0;
     border-radius: 20px;
 }
 
 .products {
     margin-top: 50px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .product > img {
