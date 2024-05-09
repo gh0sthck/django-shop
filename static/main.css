@@ -57,7 +57,7 @@
 }
 
 .main_button:hover {
-    background-color: #e5e0e0;
+    background-color: rgb(229, 224, 224);
     -webkit-box-shadow: 0px 0px 19px 0px rgba(229, 224, 224, 0.28);
     -moz-box-shadow: 0px 0px 19px 0px rgba(229, 224, 224, 0.28);
     box-shadow: 0px 0px 19px 0px rgba(229, 224, 224, 0.28);
@@ -83,7 +83,28 @@
     flex-wrap: wrap;
 }
 
+@keyframes select-anim {
+    from {
+        position: relative;
+        bottom: 0px;
+    }
 
+    to {
+        position: relative;
+        bottom: 20px;
+    }
+}
+
+.product:hover {
+    -webkit-box-shadow: 0px 0px 19px 0px rgba(243, 200, 200, 0.4);
+    -moz-box-shadow: 0px 0px 19px 0px rgba(243, 200, 200, 0.4);
+    box-shadow: 0px 0px 19px 0px rgba(243, 200, 200, 0.4);
+    animation-name: select-anim;
+    animation-duration: 0.8s;
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
+    animation-fill-mode: both;
+    transition: .3;
+}
 
 .product_wrapper > img {
     width: 100%;
