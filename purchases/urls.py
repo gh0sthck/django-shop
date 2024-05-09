@@ -2,7 +2,15 @@ from typing import List
 
 from django.urls import path
 
-from .views import CreateCategory, DeleteCategory, DeleteProduct, home, current_product, EditProduct, CreateProduct
+from .views import (
+    CreateCategory,
+    DeleteCategory,
+    DeleteProduct,
+    home,
+    current_product,
+    EditProduct,
+    CreateProduct,
+)
 
 urlpatterns: List = [
     path("", home, name="home"),
@@ -15,5 +23,7 @@ urlpatterns: List = [
     path("edit_product/<slug:slug>", EditProduct.as_view(), name="edit_product"),
     
     path("delete_product/<slug:slug>", DeleteProduct.as_view(), name="delete_product"),
-    path("delete_category/<slug:slug>", DeleteCategory.as_view(), name="delete_category"),
+    path(
+        "delete_category/<slug:slug>", DeleteCategory.as_view(), name="delete_category"
+    ),
 ]

@@ -7,7 +7,8 @@ from pytils.translit import slugify
 class ShopClient(AbstractUser):
     username = models.CharField(max_length=127, null=True, unique=True, verbose_name="Имя")
     email = models.EmailField(max_length=127, null=True, unique=True)
-    avatar = models.ImageField(upload_to="profile/", verbose_name="Аватар", null=True, blank=True)
+    avatar = models.ImageField(upload_to="profile/", verbose_name="Аватар", null=True, blank=True,
+                               default="user_not_found.jpg")
     gender = models.CharField(max_length=1, verbose_name="Пол", null=False)
     balance = models.BigIntegerField(verbose_name="Баланс", null=False, default=0)
     slug = models.SlugField(verbose_name="Слаг")

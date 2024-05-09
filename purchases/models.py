@@ -1,8 +1,7 @@
-from decimal import Decimal
-from typing import List, Literal, Optional
+from typing import List, Literal
 
+from django.core.validators import FileExtensionValidator
 from django.db import models
-from django.http import HttpRequest
 from django.urls import reverse
 
 from pytils.translit import slugify
@@ -62,7 +61,13 @@ class Product(models.Model, PruchasessPermissions):
     )
     name = models.CharField(max_length=128, verbose_name="Имя")
     slug = models.SlugField(max_length=128, verbose_name="Слаг", unique=True)
-    image = models.ImageField(upload_to="products/", blank=True)
+    image = models.ImageField(
+        upload_to="products/",
+        blank=True,
+        null=True,
+        default="test_icon.png",
+        validators=[FileExtensionValidator(["png", "jpg", "jpeg"])],
+    )
     description = models.TextField(blank=True, verbose_name="Описание")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     available = models.BooleanField(default=True, verbose_name="В наличии")
@@ -79,7 +84,7 @@ class Product(models.Model, PruchasessPermissions):
         if comment:
             return comment[0]
         return None
-    
+
     def get_visual_rating(self):
         """Return Product raiting in emoji hearts."""
         return "🖤" if self.rating < 1 else (int(self.rating) * "💜")
@@ -108,7 +113,11 @@ class Product(models.Model, PruchasessPermissions):
 
 class Comments(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="comments", related_query_name="comment", verbose_name="Товар"
+        Product,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        related_query_name="comment",
+        verbose_name="Товар",
     )
     client = models.ForeignKey(
         ShopClient,
@@ -126,7 +135,11 @@ class Comments(models.Model):
         """Return product decimal rating by specific Product."""
         product_comments = Comments.objects.filter(product=product)
         return (
-            round(sum(comment.rating for comment in product_comments) / len(product_comments), 2)
+            round(
+                sum(comment.rating for comment in product_comments)
+                / len(product_comments),
+                2,
+            )
             if product_comments
             else 0
         )
