@@ -8,6 +8,11 @@
     
     <img style="width: 30%; height: 320px;" src="{{ current_user.avatar.url }}" alt="Фото профиля нет">
     <h1>{{ current_user.username }}</h1>
+
+    {% if current_user == request.user %}
+        <a href="{% url "user_edit" current_user.slug %}">Редактировать</a>
+    {% endif %}
+    
     
     {% if user.is_superuser %}
         <p>Администратор</p>
